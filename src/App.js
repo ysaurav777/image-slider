@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react'
 
-function App() {
+const App = ({url,page,limit}) => {
+
+  const [images,setImages]=useState([]);
+  const [currimg,setcurrimg]=useState(0);
+  const [error,seterror]=useState(null);
+  const [loading,setloading]=useState(false);
+
+  async function fetchImages (geturl) {
+    try {
+      setloading(true);
+      const response = await fetch(`${geturl}?page=${page}&limit=${limit}`);
+      const data = await response.json();
+
+      if(data) {
+        setImages(data);
+        setloading(false);
+      }
+    }
+    catch(e) {
+      seterror(e.message);
+      setloading(false);
+    }
+  }
+
+  useEffect(()=>{
+    if(url!=="") {
+      fetchImages(url);
+    }
+  },[url]);
+
+  if(loading) {
+    return <div>Loading data! please wait</div>
+  }
+
+  if(error!==null) {
+    return <div>Error Occured! {error}</div>
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <div>App</div>
+  )
 }
 
 export default App;
